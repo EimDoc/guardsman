@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анализатор файлов</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <script src="../js/main.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Инструмент анализа файлов</h1>
+
+        <!-- Кнопка для выбора файла -->
+        <div class="button-group">
+            <select id="file-selection" class="custom-select">
+                <option value="" disabled selected>Выберите файл для проверки</option>
+            </select>
+
+            <!-- Кнопка для выбора ОС -->
+            <select id="os-selection" class="custom-select">
+                <option value="" disabled selected>Выберите ОС</option>
+                <option value="windows">Windows</option>
+                <option value="linux">Linux</option>
+            </select>
+
+            <!-- Кнопки для анализа -->
+            <button id="static-analysis" class="custom-button">Статический анализ</button>
+            <button id="dynamic-analysis" class="custom-button" onclick="startDynamicAnalyze()">Динамический анализ</button>
+        </div>
+
+        <!-- Окно вывода результатов -->
+        <div id="output" class="output-box">
+            <p>Результаты появятся здесь...</p>
+        </div>
+    </div>
+</body>
+</html>
