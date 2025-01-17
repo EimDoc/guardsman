@@ -1,7 +1,7 @@
 import json
 from fastapi import FastAPI, Response
 
-from backend.utils.utils import get_path_to_usb_drive
+from src.utils.utils import get_path_to_usb_drive
 app = FastAPI()
 
 

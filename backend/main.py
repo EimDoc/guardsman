@@ -1,6 +1,6 @@
 import asyncio
 import uvicorn
-from routes.app import app
+from src.routes.app import app
 
 
 async def main():
