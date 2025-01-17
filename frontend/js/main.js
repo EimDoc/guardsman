@@ -1,5 +1,5 @@
 
-function startDynamicAnalyze() {
+async function startDynamicAnalyze() {
     let file = document.getElementById("file-selection");
     file = file.options[file.selectedIndex].value;
 
@@ -11,6 +11,7 @@ function startDynamicAnalyze() {
     } else if (systemType === "Выберите ОС") {
         alert("Выберите ОС, на которой будет проверяться файл");
     } else {
+        await listenLogsFromServer();
         console.log("do something...");
         console.log(systemType);
         console.log(file);
@@ -36,4 +37,30 @@ async function getFilesFromServer() {
     }
 }
 
-window.onload = getFilesFromServer;
+
+async function listenLogsFromServer() {
+    const output = document.getElementById("output");
+    const eventSource = new EventSource("http://localhost:8000/logs_stream");
+
+    eventSource.onopen = () => {
+        console.log('EventSource connected')
+        output.innerText = '';
+    }
+
+    eventSource.onmessage = (event) => {
+        const p = document.createElement('p');
+        p.textContent = event.data;
+        output.appendChild(p);
+    };
+
+    eventSource.onerror = () => {
+        console.error('Connection Closed');
+        eventSource.close();
+    };
+}
+
+async function doWhenPageLoad() {
+    await getFilesFromServer();
+}
+
+window.onload = doWhenPageLoad;
