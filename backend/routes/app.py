@@ -6,7 +6,7 @@ app = FastAPI()
 
 
 @app.get("/directory")
-async def test():
+async def directory():
     return Response(
         content=json.dumps(get_path_to_usb_drive()),
         headers={"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
