@@ -93,6 +93,7 @@ class SystemCallMonitor(Monitor):
                     break
                 self.check_line_for_patterns(line)
 
+            logger.info(f"Stop monitoring {self._file_to_check} with strace...\n")
         except KeyboardInterrupt:
             logger.info("\nMonitoring interrupted by user.")
         except Exception as e:
@@ -103,8 +104,8 @@ class SystemCallMonitor(Monitor):
 
 
 if __name__ == '__main__':
-    file_monitor = FileMonitor(path_to_monitor="/Users/decobraz/Downloads")
+    file_monitor = FileMonitor(path_to_monitor="./")
     file_monitor.start()
 
-    system_monitor = SystemCallMonitor("python3 ../main.py")
+    system_monitor = SystemCallMonitor("./")
     system_monitor.start()
