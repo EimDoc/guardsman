@@ -24,7 +24,7 @@ async function getFilesFromServer() {
     const headers = new Headers();
 
 
-    const response = await fetch("http://localhost:8000/directory", {
+    const response = await fetch("http://10.10.16.150:8000/directory", {
         method: "GET",
         headers: headers
     });
@@ -40,7 +40,7 @@ async function getFilesFromServer() {
 
 async function listenLogsFromServer() {
     const output = document.getElementById("output");
-    const eventSource = new EventSource("http://localhost:8000/logs_stream");
+    const eventSource = new EventSource("http://10.10.16.150:8000/logs_stream");
 
     eventSource.onopen = () => {
         console.log('EventSource connected')
