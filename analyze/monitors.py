@@ -101,11 +101,3 @@ class SystemCallMonitor(Monitor):
         finally:
             if process:
                 process.terminate()
-
-
-if __name__ == '__main__':
-    file_monitor = FileMonitor(path_to_monitor="./")
-    file_monitor.start()
-
-    system_monitor = SystemCallMonitor("./")
-    system_monitor.start()

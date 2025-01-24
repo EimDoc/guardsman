@@ -1,0 +1,8 @@
+services:
+
+  ubuntu-ssh:
+    build:
+      context: ./
+      dockerfile: ubuntu-for-analyze/Dockerfile
+    ports:
+      - 2222:22
