@@ -1,6 +1,5 @@
 annotated-types==0.7.0
 anyio==4.8.0
-click==8.1.8
 fastapi==0.115.6
 h11==0.14.0
 idna==3.10
@@ -15,4 +14,5 @@ watchdog~=6.0.0
 python-decouple
 docker~=7.1.0
 paramiko~=3.5.0
-scp~=0.15.0
+aiofiles~=24.1.0
+vt-py

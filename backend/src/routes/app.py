@@ -1,10 +1,12 @@
 import asyncio
 import json
+import os
 import shutil
 
 import aiofiles
 import docker
 import vt
+import paramiko
 from fastapi import FastAPI, Response
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -33,10 +35,14 @@ async def directory():
 
 
 @app.post("/dynamic_analyze")
-async def dynamic_analyze(file_for_analyze: FileModel):
+async def dynamic_analyze(file_for_analyze: FileModel) -> list:
     path = file_for_analyze.path_to_file
 
+    if not os.path.exists(PATH_TO_VOLUME):
+        os.mkdir(PATH_TO_VOLUME)
+
     shutil.copy(path, PATH_TO_VOLUME)
+    filename = path.split("/")[-1]
 
     docker_client = docker.from_env()
     container = docker_client.containers.run(
@@ -46,10 +52,26 @@ async def dynamic_analyze(file_for_analyze: FileModel):
         volumes={PATH_TO_VOLUME: {'bind': '/home/dockeruser/to_test', 'mode': 'rw'}}
     )
 
-    await asyncio.sleep(30)
+    await asyncio.sleep(10)
+
+    ssh_client = paramiko.SSHClient()
+    ssh_client.set_missing_host_key_policy(paramiko.WarningPolicy)
+    ssh_client.connect("localhost", 2222, username="dockeruser", password="dockeruser")
+
+    ssh_client.exec_command(f"sudo python3 ./Code/analyze.py start ./to_test/{filename}")
+
+    await asyncio.sleep(60)
+
+    results = []
+    async with aiofiles.open(f"{PATH_TO_VOLUME}/results.txt", mode='r') as f:
+        async for i in f:
+            results.append(i)
+
     shutil.rmtree(PATH_TO_VOLUME)
     container.stop()
     container.remove()
+
+    return results
 
 
 @app.post("/static_analyze")

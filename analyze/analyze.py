@@ -1,3 +1,5 @@
+import time
+
 import fire
 from monitors import SystemCallMonitor, FileMonitor
 
@@ -14,6 +16,7 @@ class Commands:
 
         file_monitor.start()
         system_call_monitor.start()
+        time.sleep(40)
 
 
 if __name__ == '__main__':

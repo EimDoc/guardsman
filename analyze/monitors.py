@@ -17,16 +17,26 @@ class Monitor(ABC, Thread):
     def run(self):
         pass
 
+    @abstractmethod
+    def on_close(self):
+        pass
+
 
 class FileHandler(FileSystemEventHandler):
     def on_modified(self, event):
         logger.info(f"File modified: {event.src_path}")
+        with open("/home/dockeruser/to_test/results.txt", 'a') as f:
+            f.write(f"File modified: {event.src_path}")
 
     def on_created(self, event):
         logger.info(f"File created: {event.src_path}")
+        with open("/home/dockeruser/to_test/results.txt", 'a') as f:
+            f.write(f"File created: {event.src_path}")
 
     def on_deleted(self, event):
         logger.info(f"File deleted: {event.src_path}")
+        with open("/home/dockeruser/to_test/results.txt", 'a') as f:
+            f.write(f"File deleted: {event.src_path}")
 
 
 class FileMonitor(Monitor):
@@ -45,10 +55,11 @@ class FileMonitor(Monitor):
             while True:
                 time.sleep(1)
         except KeyboardInterrupt:
+            logger.info(f"Stop monitoring {self._path}")
+        finally:
             self.on_close()
 
     def on_close(self):
-        logger.info(f"Stop monitoring {self._path}")
         self._observer.stop()
         self._observer.join()
 
@@ -71,6 +82,9 @@ class SystemCallMonitor(Monitor):
             for pattern in patterns:
                 if re.search(pattern, line):
                     logger.warning(f"[ALERT] Suspicious activity detected ({category}): {line.strip()}")
+                    with open("/home/dockeruser/to_test/results.txt", 'a') as f:
+                        f.write(f"[ALERT] Suspicious activity detected ({category}): {line.strip()}\n\n")
+
                     return True
         return False
 
@@ -101,3 +115,6 @@ class SystemCallMonitor(Monitor):
         finally:
             if process:
                 process.terminate()
+
+    def on_close(self):
+        pass

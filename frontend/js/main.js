@@ -11,17 +11,27 @@ async function startDynamicAnalysis() {
     } else if (systemType === "Выберите ОС") {
         alert("Выберите ОС, на которой будет проверяться файл");
     } else {
+        const output = document.getElementById("output");
+        output.innerText = '';
+        let p = document.createElement('p');
+        p.textContent = "Динамический анализ файла начат...";
+        output.appendChild(p);
         const data = {path_to_file: file}
-        await fetch(
-            "http://localhost:8000/dynamic_analyze", {
+        const response = await fetch(
+            "http://10.10.16.150:8000/dynamic_analyze", {
                 method: "POST",
                 headers: {'Content-Type': 'application/json;charset=utf-8'},
                 body: JSON.stringify(data)
             });
-        await listenLogsFromServer();
-        console.log("do something...");
-        console.log(systemType);
-        console.log(file);
+
+        const results = await response.json();
+
+        for (let phrase of results) {
+            p = document.createElement('p');
+            p.textContent = phrase;
+            output.appendChild(p);
+        }
+
     }
 }
 
@@ -32,7 +42,7 @@ async function getFilesFromServer() {
 
 
     const response = await fetch(
-        "http://localhost:8000/directory", {
+        "http://10.10.16.150:8000/directory", {
         method: "GET",
         headers: headers
     });
@@ -61,7 +71,7 @@ async function startStaticAnalysis() {
 
         const data = {path_to_file: file}
         const response = await fetch(
-            "http://localhost:8000/static_analyze", {
+            "http://10.10.16.150:8000/static_analyze", {
                 method: "POST",
                 headers: {'Content-Type': 'application/json;charset=utf-8'},
                 body: JSON.stringify(data)
@@ -77,7 +87,7 @@ async function startStaticAnalysis() {
 
 async function listenLogsFromServer() {
     const output = document.getElementById("output");
-    const eventSource = new EventSource("http://localhost:8000/logs_stream");
+    const eventSource = new EventSource("http://10.10.16.150:8000/logs_stream");
 
     eventSource.onopen = () => {
         console.log('EventSource connected')
