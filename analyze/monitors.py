@@ -93,7 +93,7 @@ class SystemCallMonitor(Monitor):
         try:
             # Запуск strace с анализом системных вызовов
             process = subprocess.Popen(
-                ["strace", "-f", "-e", "trace=all", self._file_to_check],
+                ["sudo", "strace", "-f", "-e", "trace=all", self._file_to_check],
                 stderr=subprocess.PIPE,
                 text=True
             )

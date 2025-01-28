@@ -75,15 +75,24 @@ async def dynamic_analyze(file_for_analyze: FileModel) -> list:
 
 
 @app.post("/static_analyze")
-async def static_analyze(file_for_analyze: FileModel) -> str:
+async def static_analyze(file_for_analyze: FileModel) -> list:
     client = vt.Client(VT_KEY)
     with open(file_for_analyze.path_to_file, "rb") as file:
         analysis = await client.scan_file_async(file, wait_for_completion=True)
     await client.close_async()
 
     if analysis.stats.get('malicious') + analysis.stats.get('suspicious') > analysis.stats.get('harmless') + analysis.stats.get('undetected'):
-        return "По итогам статического анализа файл считается вредоносным"
-    return "Статический анализ файла не выявил угроз"
+        result = "\nПо итогам статического анализа файл считается вредоносным"
+    else:
+        result = "\nСтатический анализ файла не выявил угроз"
+
+    analysis.stats.pop("timeout")
+    analysis.stats.pop("confirmed-timeout")
+    analysis.stats.pop("failure")
+    analysis.stats.pop("type-unsupported")
+    analysis_stats = [f'{key}: {value}' for key, value in analysis.stats.items()]
+    analysis_stats.append(result)
+    return analysis_stats
 
 
 @app.get("/logs_stream")

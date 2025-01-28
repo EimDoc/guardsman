@@ -65,7 +65,7 @@ async function startStaticAnalysis() {
     } else {
         const output = document.getElementById("output");
         output.innerText = '';
-        const p = document.createElement('p');
+        let p = document.createElement('p');
         p.textContent = "Статический анализ файла начат...";
         output.appendChild(p);
 
@@ -77,33 +77,14 @@ async function startStaticAnalysis() {
                 body: JSON.stringify(data)
             });
 
-        const text = await response.text()
+        const results = await response.json();
 
-        p.textContent = text;
-        output.appendChild(p);
+        for (let phrase of results) {
+            p = document.createElement('p');
+            p.textContent = phrase;
+            output.appendChild(p);
+        }
     }
-}
-
-
-async function listenLogsFromServer() {
-    const output = document.getElementById("output");
-    const eventSource = new EventSource("http://10.10.16.150:8000/logs_stream");
-
-    eventSource.onopen = () => {
-        console.log('EventSource connected')
-        output.innerText = '';
-    }
-
-    eventSource.onmessage = (event) => {
-        const p = document.createElement('p');
-        p.textContent = event.data;
-        output.appendChild(p);
-    };
-
-    eventSource.onerror = () => {
-        console.error('Connection Closed');
-        eventSource.close();
-    };
 }
 
 async function doWhenPageLoad() {
