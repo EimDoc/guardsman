@@ -81,7 +81,8 @@ async def static_analyze(file_for_analyze: FileModel) -> list:
         analysis = await client.scan_file_async(file, wait_for_completion=True)
     await client.close_async()
 
-    if analysis.stats.get('malicious') + analysis.stats.get('suspicious') > analysis.stats.get('harmless') + analysis.stats.get('undetected'):
+    if (analysis.stats.get('malicious') + analysis.stats.get('suspicious') >
+            analysis.stats.get('harmless') + analysis.stats.get('undetected')):
         result = "\nПо итогам статического анализа файл считается вредоносным"
     else:
         result = "\nСтатический анализ файла не выявил угроз"
@@ -90,9 +91,9 @@ async def static_analyze(file_for_analyze: FileModel) -> list:
     analysis.stats.pop("confirmed-timeout")
     analysis.stats.pop("failure")
     analysis.stats.pop("type-unsupported")
-    analysis_stats = [f'{key}: {value}' for key, value in analysis.stats.items()]
-    analysis_stats.append(result)
-    return analysis_stats
+    analysis.stats = [f'{key}: {value}' for key, value in analysis.stats.items()]
+    analysis.stats.append(result)
+    return analysis.stats
 
 
 @app.get("/logs_stream")

@@ -91,7 +91,6 @@ class SystemCallMonitor(Monitor):
     def run(self):
         process = None
         try:
-            # Запуск strace с анализом системных вызовов
             process = subprocess.Popen(
                 ["sudo", "strace", "-f", "-e", "trace=all", self._file_to_check],
                 stderr=subprocess.PIPE,
@@ -100,10 +99,9 @@ class SystemCallMonitor(Monitor):
 
             logger.info(f"Monitoring {self._file_to_check} with strace...\n")
 
-            # Чтение вывода strace в реальном времени
             while True:
                 line = process.stderr.readline()
-                if not line:  # Если данные закончились
+                if not line:
                     break
                 self.check_line_for_patterns(line)
 
